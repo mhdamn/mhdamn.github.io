@@ -19,3 +19,6 @@ Full-Stack Software Engineer | Solution Architect
 The portfolio intentionally presents Mohammed as an end-to-end engineer who can work across
 frontend, backend, APIs, databases, integrations, automation, AI and architecture, rather than
 positioning him only as a .NET developer.
+
+Ajman DED official website:
+https://www.ajmanded.ae/en
