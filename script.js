@@ -2,16 +2,41 @@ const menu = document.querySelector('.menu');
 const nav = document.querySelector('.nav');
 
 if (menu && nav) {
+  const closeMenu = () => {
+    nav.classList.remove('open');
+    menu.setAttribute('aria-expanded', 'false');
+    menu.setAttribute('aria-label', 'Open navigation');
+  };
+
+  const openMenu = () => {
+    nav.classList.add('open');
+    menu.setAttribute('aria-expanded', 'true');
+    menu.setAttribute('aria-label', 'Close navigation');
+  };
+
   menu.addEventListener('click', () => {
-    const open = nav.classList.toggle('open');
-    menu.setAttribute('aria-expanded', String(open));
+    nav.classList.contains('open') ? closeMenu() : openMenu();
   });
 
   nav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      nav.classList.remove('open');
-      menu.setAttribute('aria-expanded', 'false');
-    });
+    link.addEventListener('click', closeMenu);
+  });
+
+  document.addEventListener('click', event => {
+    if (nav.classList.contains('open') && !nav.contains(event.target) && !menu.contains(event.target)) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && nav.classList.contains('open')) {
+      closeMenu();
+      menu.focus();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 850 && nav.classList.contains('open')) closeMenu();
   });
 }
 
@@ -151,3 +176,39 @@ if (typedEl) {
     setTimeout(step, 1800);
   }
 }
+
+/* Auto-hide header: show at the top and while scrolling upward; hide while scrolling down. */
+(() => {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+
+  let lastY = Math.max(0, window.scrollY);
+  let ticking = false;
+  const threshold = 8;
+
+  const updateHeader = () => {
+    const currentY = Math.max(0, window.scrollY);
+    const delta = currentY - lastY;
+    const menuOpen = document.querySelector('.nav')?.classList.contains('open');
+
+    if (currentY <= 12) {
+      header.classList.remove('nav-hidden');
+    } else if (!menuOpen && delta > threshold) {
+      header.classList.add('nav-hidden');
+    } else if (delta < -threshold) {
+      header.classList.remove('nav-hidden');
+    }
+
+    lastY = currentY;
+    ticking = false;
+  };
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(updateHeader);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  updateHeader();
+})();
