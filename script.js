@@ -4,15 +4,27 @@ const nav = document.querySelector('.nav');
 if (menu && nav) {
   const closeMenu = () => {
     nav.classList.remove('open');
+    document.body.classList.remove('menu-open');
     menu.setAttribute('aria-expanded', 'false');
     menu.setAttribute('aria-label', 'Open navigation');
   };
 
   const openMenu = () => {
     nav.classList.add('open');
+    document.body.classList.add('menu-open');
     menu.setAttribute('aria-expanded', 'true');
     menu.setAttribute('aria-label', 'Close navigation');
   };
+
+  // Keep keyboard focus inside the mobile navigation without trapping the user.
+  nav.addEventListener('keydown', event => {
+    if (event.key !== 'Tab' || !nav.classList.contains('open')) return;
+    const items = [...nav.querySelectorAll('a')];
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  });
 
   menu.addEventListener('click', () => {
     nav.classList.contains('open') ? closeMenu() : openMenu();
@@ -184,7 +196,7 @@ if (typedEl) {
 
   let lastY = Math.max(0, window.scrollY);
   let ticking = false;
-  const threshold = 8;
+  const threshold = 10;
 
   const updateHeader = () => {
     const currentY = Math.max(0, window.scrollY);
@@ -195,7 +207,7 @@ if (typedEl) {
       header.classList.remove('nav-hidden');
     } else if (!menuOpen && delta > threshold) {
       header.classList.add('nav-hidden');
-    } else if (delta < -threshold) {
+    } else if (delta < -6) {
       header.classList.remove('nav-hidden');
     }
 
