@@ -1918,3 +1918,7 @@ footer span,footer>span:nth-child(2){color:var(--muted)}
 .timeline-meta span+span:not(.now-badge),.experience-card .timeline-meta span:nth-child(2){color:var(--muted)}
 .pill,.tag,.mini-stack span{color:#066b5e}
 html[data-theme="dark"] .pill,html[data-theme="dark"] .tag,html[data-theme="dark"] .mini-stack span{color:var(--tint-ink,#9bf0e0)}
+
+/* 404 page: keep the heading accent centered */
+.error-page .page-hero h1:after{margin-inline:auto}
+.error-page .page-hero h1{max-width:720px;margin-inline:auto}

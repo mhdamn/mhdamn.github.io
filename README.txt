@@ -23,3 +23,9 @@ Design update:
 - Premium visual refresh across About, Experience, Projects and Contact to align with the Skills page
 - Stronger page headlines, layered card surfaces, restrained gradient accents and responsive spacing
 - The site references .NET 10, the latest stable LTS release
+
+SEO
+- Site address assumed: https://mhdamn.github.io/ (change canonical, og:url, sitemap.xml and robots.txt if you use a custom domain)
+- Every page has its own title, description, canonical, Open Graph, Twitter and JSON-LD data
+- Share image: og-image.jpg (1200x630). sitemap.xml and robots.txt are in the site root. 404.html is the custom error page
+- After publishing: add the site in Google Search Console, submit sitemap.xml, then request indexing for the homepage
