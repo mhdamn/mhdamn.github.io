@@ -11,19 +11,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="projects-page">
 <a class="skip-link" href="#main-content">Skip to content</a>
 <div class="progress"></div>
 <header class="site-header">
-<a class="brand" href="index.html"><span class="brand-avatar"><img src="profile.jpg" alt="Mohammed Ameen" /></span><strong>Mohammed Ameen</strong></a>
+<a class="brand" href="index.html"><span class="brand-avatar"><img src="profile.jpg" alt="Mohammed Ameen" width="44" height="44" decoding="async" /></span><strong>Mohammed Ameen</strong></a>
 <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false"><i></i><i></i><i></i></button>
 <button class="theme-toggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme"><span class="theme-icon">◐</span><span class="theme-label">Theme</span></button>
 <nav class="nav" aria-label="Main navigation">
 <a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a class="active" href="projects.html">Projects</a><a href="skills.html">Skills</a><a class="nav-cta" href="contact.html">Contact</a>
 </nav></header>
 <main id="main-content">
-<section class="page-hero reveal"><p class="eyebrow">SELECTED WORK</p><h1>Projects &amp; Solutions</h1><p class="lead">A look at systems I've built or helped build, from government services and AI workflows to hospitality platforms, education systems, payments and ERP.</p></section>
+<section class="page-hero reveal"><p class="eyebrow">SELECTED WORK</p><h1>Systems built to <em>solve real problems.</em></h1><p class="lead">A look at systems I've built or helped build, from government services and AI workflows to hospitality platforms, education systems, payments and ERP.</p></section>
 
+<section class="project-principles section reveal" aria-label="Project themes">
+  <div><span class="principle-mark">01</span><strong>Secure by design</strong><small>Identity, validation and trusted workflows</small></div>
+  <div><span class="principle-mark">02</span><strong>Connected systems</strong><small>APIs, platforms, devices and payments</small></div>
+  <div><span class="principle-mark">03</span><strong>Built for operations</strong><small>Practical systems that support real users</small></div>
+</section>
 <section class="section project-list">
 
 <article class="project-card project-feature reveal"><div class="project-num">01</div><div><span class="tag">Government · AI · Integration</span><h2>AI-Powered WhatsApp Government Services Engine</h2><p>The backend and identity integration for a WhatsApp AI assistant that lets people use Ajman DED services through natural conversation.</p><ul><li>Built with C#, .NET 10, Clean Architecture, CQRS, n8n workflows and AI agents.</li><li>UAE PASS sign-in woven into the WhatsApp conversation flow.</li><li>Covers trade license renewals, consumer protection and dynamic policy questions.</li><li>Payment webhook processing and backend APIs behind the whole service journey.</li></ul><div class="project-tech"><span>.NET 10</span><span>CQRS</span><span>n8n</span><span>AI Agents</span><span>UAE PASS</span><span>REST</span></div></div></article>
@@ -49,21 +54,29 @@
 <section class="section case-study-section">
   <div class="case-study reveal">
     <div class="case-study-head">
-      <div><p class="eyebrow">ARCHITECTURE IN PRACTICE</p><h2>One solution, multiple systems, one clear boundary.</h2></div>
-      <span class="case-study-badge">UAE PASS · AI · .NET</span>
+      <div>
+        <p class="eyebrow">HOW THE SYSTEMS FIT TOGETHER</p>
+        <h2>Connecting the pieces into one service.</h2>
+        <p class="case-study-intro">This is how I approach connected digital services: give each part a clear responsibility, then make sure the whole journey works smoothly for the user.</p>
+      </div>
+      <span class="case-study-badge">AI · .NET · INTEGRATION</span>
     </div>
-    <div class="case-flow" aria-label="Example solution architecture">
-      <div><small>CHANNEL</small><strong>WhatsApp</strong><span>Customer conversation</span></div>
-      <i>→</i>
-      <div><small>INTELLIGENCE</small><strong>AI Agent + n8n</strong><span>Workflow orchestration</span></div>
-      <i>→</i>
-      <div><small>APPLICATION</small><strong>.NET APIs</strong><span>Clean Architecture · CQRS</span></div>
-      <i>→</i>
-      <div><small>TRUST</small><strong>UAE PASS</strong><span>Identity · Digital Vault</span></div>
-      <i>→</i>
-      <div><small>DOMAIN</small><strong>DED Services</strong><span>Licensing · Consumer Protection</span></div>
+    <div class="case-architecture" aria-label="Illustrative architecture for a connected digital service">
+      <div class="case-flow" aria-label="Main service flow">
+        <div><small>01 · CHANNEL</small><strong>WhatsApp</strong><span>Customer asks a question or starts a service</span></div>
+        <i aria-hidden="true">→</i>
+        <div><small>02 · ORCHESTRATION</small><strong>AI Agent + n8n</strong><span>Understands intent and routes the workflow</span></div>
+        <i aria-hidden="true">→</i>
+        <div><small>03 · BACKEND</small><strong>.NET APIs</strong><span>Validates requests and applies service rules</span></div>
+        <i aria-hidden="true">→</i>
+        <div><small>04 · BUSINESS SERVICES</small><strong>Service Platform</strong><span>Business rules and service operations</span></div>
+      </div>
+      <div class="case-identity">
+        <span class="case-identity-line" aria-hidden="true"></span>
+        <div><small>CONNECTED IDENTITY SERVICE</small><strong>UAE PASS</strong><p>Supports sign-in and Digital Vault credential workflows when the service requires them.</p></div>
+      </div>
     </div>
-    <div class="case-principles"><span>Clear boundaries</span><span>Secure integrations</span><span>Observable workflows</span><span>Production ownership</span></div>
+    <p class="case-study-note">The diagram is a high-level overview, not a claim that every request follows the same path. Identity and credential services are used where the specific journey needs them.</p>
   </div>
 </section>
 </main>

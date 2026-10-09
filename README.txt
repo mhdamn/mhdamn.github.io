@@ -19,3 +19,7 @@ Full-Stack Software Engineer | Solution Architect
 The portfolio intentionally presents Mohammed as an end-to-end engineer who can work across
 frontend, backend, APIs, databases, integrations, automation, AI and architecture, rather than
 positioning him only as a .NET developer.
+Design update:
+- Premium visual refresh across About, Experience, Projects and Contact to align with the Skills page
+- Stronger page headlines, layered card surfaces, restrained gradient accents and responsive spacing
+- The site references .NET 10, the latest stable LTS release

@@ -171,7 +171,7 @@ if (timelines.length) {
 /* Typed hero line */
 const typedEl = document.getElementById('typed');
 if (typedEl) {
-  const phrases = ['Building secure government integrations', 'Architecting Clean .NET 10 microservices', 'Connecting UAE PASS & Digital Vault', 'Shipping AI-powered workflows'];
+  const phrases = ['Building secure government integrations', 'Architecting clean .NET APIs', 'Connecting UAE PASS & Digital Vault', 'Shipping AI-powered workflows'];
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
     typedEl.textContent = phrases[0];
   } else {
@@ -223,4 +223,39 @@ if (typedEl) {
   }, { passive: true });
 
   updateHeader();
+})();
+
+/* Hero card: subtle 3D tilt on pointer devices */
+(() => {
+  const card = document.querySelector('.hero-card.hc');
+  if (!card || !window.matchMedia) return;
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    card.style.setProperty('--ry', (px * 7).toFixed(2) + 'deg');
+    card.style.setProperty('--rx', (-py * 7).toFixed(2) + 'deg');
+  });
+  card.addEventListener('pointerleave', () => {
+    card.style.setProperty('--rx', '0deg');
+    card.style.setProperty('--ry', '0deg');
+  });
+})();
+
+/* Accessibility: mark the current page in the navigation */
+document.querySelectorAll('.nav a.active').forEach(a => a.setAttribute('aria-current', 'page'));
+
+/* Back-to-top button */
+(() => {
+  const btn = document.createElement('button');
+  btn.className = 'to-top';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Back to top');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  document.body.appendChild(btn);
+  const toggle = () => btn.classList.toggle('show', window.scrollY > 700);
+  window.addEventListener('scroll', toggle, { passive: true });
+  toggle();
 })();
