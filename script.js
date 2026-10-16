@@ -104,9 +104,15 @@ if (progress) {
   updateProgress();
 }
 
-const path = window.location.pathname.split('/').pop() || 'index.html';
+/* Clean URLs: show /about instead of /about.html, and mark the current page */
+const cleanPath = p => p.replace(/(^|\/)index\.html$/, '$1').replace(/\.html$/, '').replace(/(.)\/+$/, '$1') || '/';
+if (location.protocol.startsWith('http') && /\.html$/.test(location.pathname)) {
+  history.replaceState(null, '', cleanPath(location.pathname) + location.search + location.hash);
+}
+const currentPath = cleanPath(location.pathname);
 document.querySelectorAll('.nav a').forEach(link => {
-  if (link.getAttribute('href') === path) link.classList.add('active');
+  const href = link.getAttribute('href');
+  if (href && !href.startsWith('http') && cleanPath(href) === currentPath) link.classList.add('active');
 });
 
 /* Header shadow on scroll */
@@ -189,40 +195,47 @@ if (typedEl) {
   }
 }
 
-/* Auto-hide header: show at the top and while scrolling upward; hide while scrolling down. */
+/* Compact navbar: past the top of the page the header shrinks to a small photo + name pill.
+   Hover, focus or the menu button brings the full navigation back. */
 (() => {
   const header = document.querySelector('.site-header');
   if (!header) return;
+  const ON = 90, OFF = 30;
+  let compact = false, ticking = false;
 
-  let lastY = Math.max(0, window.scrollY);
-  let ticking = false;
-  const threshold = 10;
-
-  const updateHeader = () => {
-    const currentY = Math.max(0, window.scrollY);
-    const delta = currentY - lastY;
-    const menuOpen = document.querySelector('.nav')?.classList.contains('open');
-
-    if (currentY <= 12) {
-      header.classList.remove('nav-hidden');
-    } else if (!menuOpen && delta > threshold) {
-      header.classList.add('nav-hidden');
-    } else if (delta < -6) {
-      header.classList.remove('nav-hidden');
-    }
-
-    lastY = currentY;
-    ticking = false;
+  const set = state => {
+    if (state === compact) return;
+    const wasSticky = getComputedStyle(header).position === 'sticky';
+    const h = header.offsetHeight;
+    compact = state;
+    header.classList.toggle('is-compact', state);
+    // The sticky bar leaves the page flow when it becomes a floating pill: hold its space so content does not jump.
+    document.body.style.paddingTop = state && wasSticky ? h + 'px' : '';
+    if (!state) header.classList.remove('is-open');
   };
 
+  const update = () => {
+    const y = Math.max(0, window.scrollY);
+    const menuOpen = document.querySelector('.nav')?.classList.contains('open');
+    if (y > ON) set(true);
+    else if (y < OFF && !menuOpen) set(false);
+    ticking = false;
+  };
   window.addEventListener('scroll', () => {
-    if (!ticking) {
-      window.requestAnimationFrame(updateHeader);
-      ticking = true;
-    }
+    if (!ticking) { requestAnimationFrame(update); ticking = true; }
   }, { passive: true });
+  window.addEventListener('resize', () => { if (compact) { set(false); update(); } });
 
-  updateHeader();
+  // Keyboard users: focusing anything in the pill expands it (handled in CSS via :focus-within).
+  // Touch users: tapping the pill background (not a link) toggles the full navigation.
+  header.addEventListener('click', e => {
+    if (!compact || e.target.closest('a, button')) return;
+    header.classList.toggle('is-open');
+  });
+  document.addEventListener('click', e => {
+    if (compact && !header.contains(e.target)) header.classList.remove('is-open');
+  });
+  update();
 })();
 
 /* Hero card: subtle 3D tilt on pointer devices */

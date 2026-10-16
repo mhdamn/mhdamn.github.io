@@ -3,7 +3,13 @@
 <head>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png">
-<meta charset="utf-8"><meta name="theme-color" content="#07111f">
+<meta charset="utf-8">
+<script>
+/* Old links such as /about/ or /about/index.html now land here: send them to the slash-free page. */
+(function(){var m=location.pathname.match(/^\/(about|experience|projects|skills|contact)(\/|\/index\.html)$/);
+if(m){location.replace('/'+m[1]+location.search+location.hash);}})();
+</script>
+<meta name="theme-color" content="#07111f">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Page not found | Mohammed Ameen Abdullah</title>
 <meta name="description" content="The page you were looking for could not be found.">
@@ -22,14 +28,14 @@
 <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false"><i></i><i></i><i></i></button>
 <button class="theme-toggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme"><span class="theme-icon">◐</span><span class="theme-label">Theme</span></button>
 <nav class="nav" aria-label="Main navigation">
-<a href="/">Home</a><a href="/about/">About</a><a href="/experience/">Experience</a><a href="/projects/">Projects</a><a href="/skills/">Skills</a><a class="nav-cta" href="/contact/">Contact</a>
+<a href="/">Home</a><a href="/about">About</a><a href="/experience">Experience</a><a href="/projects">Projects</a><a href="/skills">Skills</a><a class="nav-cta" href="/contact">Contact</a>
 </nav></header>
 <main id="main-content">
 <section class="page-hero" style="text-align:center;padding-top:130px;padding-bottom:130px">
 <p class="eyebrow" style="justify-content:center">ERROR 404</p>
 <h1>This page took a wrong turn.</h1>
 <p class="lead" style="margin-inline:auto">The page you're looking for doesn't exist or has moved. Head back to the homepage, or jump straight to my work.</p>
-<div class="actions" style="justify-content:center"><a class="btn primary" href="/">Back to home</a><a class="btn ghost" href="/projects/">See my projects</a></div>
+<div class="actions" style="justify-content:center"><a class="btn primary" href="/">Back to home</a><a class="btn ghost" href="/projects">See my projects</a></div>
 </section>
 </main>
   <footer>
