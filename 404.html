@@ -6,8 +6,9 @@
 <meta charset="utf-8">
 <script>
 /* Old links such as /about/ or /about/index.html now land here: send them to the slash-free page. */
-(function(){var m=location.pathname.match(/^\/(about|experience|projects|skills|contact)(\/|\/index\.html)$/);
-if(m){location.replace('/'+m[1]+location.search+location.hash);}})();
+(function(){var m=location.pathname.match(/^\/(about|experience|projects|skills)(\/|\/index\.html)$/);
+if(m){location.replace('/'+m[1]+location.search+location.hash);}
+else if(/^\/contact(\/|\.html|\/index\.html)?$/.test(location.pathname)){location.replace('/');}})();
 </script>
 <meta name="theme-color" content="#07111f">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,7 +29,7 @@ if(m){location.replace('/'+m[1]+location.search+location.hash);}})();
 <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false"><i></i><i></i><i></i></button>
 <button class="theme-toggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme"><span class="theme-icon">◐</span><span class="theme-label">Theme</span></button>
 <nav class="nav" aria-label="Main navigation">
-<a href="/">Home</a><a href="/about">About</a><a href="/experience">Experience</a><a href="/projects">Projects</a><a href="/skills">Skills</a><a class="nav-cta" href="/contact">Contact</a>
+<a href="/">Home</a><a href="/about">About</a><a href="/experience">Experience</a><a href="/projects">Projects</a><a href="/skills">Skills</a>
 </nav></header>
 <main id="main-content">
 <section class="page-hero" style="text-align:center;padding-top:130px;padding-bottom:130px">

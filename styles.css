@@ -1938,7 +1938,7 @@ html[data-theme="dark"] .pill,html[data-theme="dark"] .tag,html[data-theme="dark
   border:1px solid var(--line)!important;border-radius:999px!important;
   background:rgba(255,255,255,.84)!important;-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
   box-shadow:0 14px 40px rgba(15,23,42,.16)!important;transform:none!important;z-index:1000;
-  animation:pillIn .45s cubic-bezier(.2,.7,.2,1) both;transition:padding .35s ease,box-shadow .3s}
+  animation:pillIn .45s cubic-bezier(.2,.7,.2,1) backwards;transition:padding .35s ease,box-shadow .3s,transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s}
 html[data-theme="dark"] .site-header.is-compact{background:rgba(14,20,32,.84)!important;box-shadow:0 16px 44px rgba(0,0,0,.5)!important}
 .site-header.is-compact .brand{gap:11px;min-width:0;flex:none}
 .site-header.is-compact .brand-avatar{width:42px;height:42px;flex:none}
@@ -1949,9 +1949,9 @@ html[data-theme="dark"] .site-header.is-compact{background:rgba(14,20,32,.84)!im
     transition:max-width .5s cubic-bezier(.2,.7,.2,1),opacity .25s,margin .35s,padding .35s,border-width .35s}
   .site-header.is-compact .theme-toggle{padding-inline:0!important;border-width:0!important}
   .site-header.is-compact .menu{display:none!important}
-  .site-header.is-compact:hover,.site-header.is-compact:focus-within,.site-header.is-compact.is-open{padding-right:12px!important}
-  .site-header.is-compact:hover .nav,.site-header.is-compact:focus-within .nav,.site-header.is-compact.is-open .nav{max-width:680px;opacity:1;margin-left:20px!important;pointer-events:auto}
-  .site-header.is-compact:hover .theme-toggle,.site-header.is-compact:focus-within .theme-toggle,.site-header.is-compact.is-open .theme-toggle{max-width:160px;opacity:1;margin-left:8px!important;padding-inline:12px!important;border-width:1px!important;pointer-events:auto}
+  .site-header.is-compact.is-hover,.site-header.is-compact.is-kbd,.site-header.is-compact.is-open{padding-right:12px!important}
+  .site-header.is-compact.is-hover .nav,.site-header.is-compact.is-kbd .nav,.site-header.is-compact.is-open .nav{max-width:680px;opacity:1;margin-left:20px!important;pointer-events:auto}
+  .site-header.is-compact.is-hover .theme-toggle,.site-header.is-compact.is-kbd .theme-toggle,.site-header.is-compact.is-open .theme-toggle{max-width:160px;opacity:1;margin-left:8px!important;padding-inline:12px!important;border-width:1px!important;pointer-events:auto}
 }
 @media(max-width:850px){
   .site-header.is-compact{padding-right:8px!important;left:14px!important}
@@ -1973,4 +1973,37 @@ html[data-theme="dark"] .site-header.is-compact{background:rgba(14,20,32,.84)!im
     width:min(300px,calc(100vw - 28px))!important;max-width:none!important;background:var(--surface)!important;border:1px solid var(--line)!important;
     border-radius:20px!important;box-shadow:0 20px 50px rgba(15,23,42,.2)!important;padding:10px!important}
   html[data-theme="dark"] .site-header.is-compact .nav.open{box-shadow:0 22px 56px rgba(0,0,0,.55)!important}
+}
+
+/* =========================================================
+   NAVBAR: hide on scroll down, sliding page indicator
+   ========================================================= */
+.site-header.is-compact.pill-hidden{transform:translateY(calc(-100% - 24px))!important;opacity:0;pointer-events:none}
+
+.nav{position:relative}
+.nav a{position:relative;z-index:1;background:transparent!important;transition:color .25s,transform .25s cubic-bezier(.2,.7,.2,1)}
+.nav a:hover,.nav a.active,html[data-theme="dark"] .nav a:hover,html[data-theme="dark"] .nav a.active{background:transparent!important}
+.nav a:hover{transform:translateY(-1px)}
+.nav a:active{transform:scale(.96)}
+.nav a.active{color:var(--accent);font-weight:700}
+.nav-indicator{position:absolute;left:0;top:0;z-index:0;width:var(--w,0);height:var(--h,0);transform:translate(var(--x,0),var(--y,0));
+  border-radius:11px;background:rgba(15,157,138,.12);box-shadow:inset 0 0 0 1px rgba(15,157,138,.22);opacity:0;pointer-events:none;
+  transition:transform .5s cubic-bezier(.2,.8,.2,1),width .5s cubic-bezier(.2,.8,.2,1),height .35s,opacity .25s}
+.nav-indicator.on{opacity:1}
+.nav-indicator.no-anim{transition:none!important}
+.nav-indicator:after{content:"";position:absolute;left:24%;right:24%;bottom:4px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2,#5b5ce2))}
+html[data-theme="dark"] .nav-indicator{background:rgba(45,212,191,.14);box-shadow:inset 0 0 0 1px rgba(45,212,191,.28)}
+html[data-theme="dark"] .nav a.active{color:#7ef0dd}
+@keyframes navIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.nav.intro a{animation:navIn .55s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*70ms + 120ms)}
+@media(max-width:850px){.nav-indicator{border-radius:12px}.nav-indicator:after{left:14px;right:auto;width:22px;bottom:auto;top:50%;height:2px;transform:translateY(-50%) translateX(-14px);display:none}}
+@media(prefers-reduced-motion:reduce){.nav-indicator{transition:none}.nav.intro a{animation:none}.nav a:hover{transform:none}}
+
+/* nav polish: no leftover box behind links; current page dims while another link is hovered */
+@media(min-width:851px){.site-header .nav,html[data-theme="dark"] .site-header .nav{background:transparent!important;border-color:transparent!important;box-shadow:none!important}}
+.nav.is-hovering a.active:not(:hover){color:var(--muted)!important;font-weight:600}
+html[data-theme="dark"] .nav.is-hovering a.active:not(:hover){color:#aebbd0!important}
+@media(max-width:850px){
+  html .site-header.is-compact .nav.open{background-color:#ffffff!important}
+  html[data-theme="dark"] .site-header.is-compact .nav.open{background-color:#0d1422!important}
 }

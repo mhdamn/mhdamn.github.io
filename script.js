@@ -195,15 +195,24 @@ if (typedEl) {
   }
 }
 
-/* Compact navbar: past the top of the page the header shrinks to a small photo + name pill.
-   Hover, focus or the menu button brings the full navigation back. */
+/* Compact navbar
+   - Top of the page: the full bar.
+   - Scrolling down: it becomes a photo + name pill, which hides while you keep scrolling down.
+   - Scrolling up: the pill slides back in.
+   - Desktop: hovering the pill (mouse) or tabbing into it (keyboard) expands the full navigation.
+   - Mobile: the menu button opens the dropdown. */
 (() => {
   const header = document.querySelector('.site-header');
   if (!header) return;
-  const ON = 90, OFF = 30;
-  let compact = false, ticking = false;
+  const nav = header.querySelector('.nav');
+  const ON = 90, OFF = 30, DOWN = 6, UP = 3;
+  let compact = false, hidden = false, lastY = Math.max(0, window.scrollY), ticking = false;
 
-  const set = state => {
+  const busy = () =>
+    header.classList.contains('is-hover') || header.classList.contains('is-kbd') ||
+    header.classList.contains('is-open') || nav?.classList.contains('open');
+
+  const setCompact = state => {
     if (state === compact) return;
     const wasSticky = getComputedStyle(header).position === 'sticky';
     const h = header.offsetHeight;
@@ -211,23 +220,49 @@ if (typedEl) {
     header.classList.toggle('is-compact', state);
     // The sticky bar leaves the page flow when it becomes a floating pill: hold its space so content does not jump.
     document.body.style.paddingTop = state && wasSticky ? h + 'px' : '';
-    if (!state) header.classList.remove('is-open');
+    if (!state) { setHidden(false); header.classList.remove('is-open', 'is-hover', 'is-kbd'); }
+  };
+  const setHidden = state => {
+    if (state === hidden) return;
+    hidden = state;
+    header.classList.toggle('pill-hidden', state);
+    if (state) {
+      header.classList.remove('is-open', 'is-hover', 'is-kbd');
+      if (header.contains(document.activeElement)) document.activeElement.blur();
+    }
   };
 
   const update = () => {
     const y = Math.max(0, window.scrollY);
-    const menuOpen = document.querySelector('.nav')?.classList.contains('open');
-    if (y > ON) set(true);
-    else if (y < OFF && !menuOpen) set(false);
+    const delta = y - lastY;
+    if (y > ON) {
+      setCompact(true);
+      if (!busy()) {
+        if (delta > DOWN) setHidden(true);
+        else if (delta < -UP) setHidden(false);
+      }
+    } else if (y < OFF && !nav?.classList.contains('open')) {
+      setCompact(false);
+    }
+    lastY = y;
     ticking = false;
   };
   window.addEventListener('scroll', () => {
     if (!ticking) { requestAnimationFrame(update); ticking = true; }
   }, { passive: true });
-  window.addEventListener('resize', () => { if (compact) { set(false); update(); } });
+  window.addEventListener('resize', () => { if (compact) { setCompact(false); update(); } });
 
-  // Keyboard users: focusing anything in the pill expands it (handled in CSS via :focus-within).
-  // Touch users: tapping the pill background (not a link) toggles the full navigation.
+  // Mouse hover expands the pill (touch taps do not leave it stuck open).
+  header.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') header.classList.add('is-hover'); });
+  header.addEventListener('pointerleave', () => header.classList.remove('is-hover'));
+  // Keyboard focus expands it; mouse focus (e.g. after clicking the theme button) does not.
+  header.addEventListener('focusin', e => {
+    try { if (e.target.matches(':focus-visible')) header.classList.add('is-kbd'); } catch (_) { header.classList.add('is-kbd'); }
+  });
+  header.addEventListener('focusout', () => setTimeout(() => {
+    if (!header.contains(document.activeElement)) header.classList.remove('is-kbd');
+  }, 0));
+  // Touch: tapping the pill background toggles the full navigation.
   header.addEventListener('click', e => {
     if (!compact || e.target.closest('a, button')) return;
     header.classList.toggle('is-open');
@@ -235,7 +270,69 @@ if (typedEl) {
   document.addEventListener('click', e => {
     if (compact && !header.contains(e.target)) header.classList.remove('is-open');
   });
+  // After a mouse click on the theme button, release focus so the pill collapses normally.
+  header.querySelector('.theme-toggle')?.addEventListener('click', e => {
+    if (e.detail > 0) { e.currentTarget.blur(); header.classList.remove('is-kbd', 'is-open'); }
+  });
   update();
+})();
+
+/* Navigation: a sliding highlight follows the hovered link and settles on the current page.
+   The current page's previous position is remembered, so the highlight glides from the old page to the new one. */
+(() => {
+  const nav = document.querySelector('.nav');
+  if (!nav) return;
+  const links = [...nav.querySelectorAll('a')];
+  if (!links.length) return;
+  const ind = document.createElement('span');
+  ind.className = 'nav-indicator';
+  ind.setAttribute('aria-hidden', 'true');
+  nav.prepend(ind);
+  links.forEach((a, i) => a.style.setProperty('--i', i));
+  const active = nav.querySelector('a.active');
+  let target = active;
+
+  const place = (el, instant) => {
+    target = el;
+    if (!el || !el.offsetWidth) { ind.classList.remove('on'); return; }
+    if (instant) ind.classList.add('no-anim');
+    ind.style.setProperty('--x', el.offsetLeft + 'px');
+    ind.style.setProperty('--y', el.offsetTop + 'px');
+    ind.style.setProperty('--w', el.offsetWidth + 'px');
+    ind.style.setProperty('--h', el.offsetHeight + 'px');
+    ind.classList.add('on');
+    if (instant) { void ind.offsetWidth; ind.classList.remove('no-anim'); }
+  };
+  const rest = () => place(active);
+  links.forEach(a => {
+    a.addEventListener('mouseenter', () => { nav.classList.add('is-hovering'); place(a); });
+    a.addEventListener('focus', () => place(a));
+    a.addEventListener('blur', rest);
+  });
+  nav.addEventListener('mouseleave', () => { nav.classList.remove('is-hovering'); rest(); });
+
+  const hrefOf = a => cleanPath(a.getAttribute('href') || '');
+  let from = null;
+  try { from = sessionStorage.getItem('navFrom'); } catch (_) {}
+  const fromEl = from ? links.find(l => hrefOf(l) === from) : null;
+  if (active && fromEl && fromEl !== active && nav.offsetWidth) {
+    place(fromEl, true);
+    requestAnimationFrame(() => requestAnimationFrame(() => place(active)));
+  } else {
+    place(active, true);
+  }
+  try { sessionStorage.setItem('navFrom', active ? hrefOf(active) : ''); } catch (_) {}
+
+  // Keep the highlight correct when the nav changes size (menu opens, pill expands, window resizes, fonts load).
+  if ('ResizeObserver' in window) new ResizeObserver(() => place(target, true)).observe(nav);
+  window.addEventListener('resize', () => place(target, true));
+  if (document.fonts?.ready) document.fonts.ready.then(() => place(target, true));
+
+  // Names fade in one after another on load.
+  if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    nav.classList.add('intro');
+    setTimeout(() => nav.classList.remove('intro'), 1400);
+  }
 })();
 
 /* Hero card: subtle 3D tilt on pointer devices */
